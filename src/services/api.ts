@@ -1,12 +1,6 @@
 import axios from 'axios';
 
-// https://relicario-api.josmatias.dev
-// export const baseURL =
-//   process.env.NODE_ENV === 'production'
-//     ? 'https://lmr.com'
-//     : 'https://sandbox.plantebemtec.com.br';
-
-export const baseURL = 'http://localhost:2021';
+export const baseURL = 'https://relicario-api.josematias.dev';
 
 const api = axios.create({
   baseURL,
