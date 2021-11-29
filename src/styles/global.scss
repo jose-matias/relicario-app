@@ -1,0 +1,99 @@
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --white: #fff;
+
+  --primary: #0ea976;
+
+  --gray-50: #f7f8fa;
+  --gray-100: #e6e8eb;
+  --gray-200: #afb2b1;
+  --gray-500: #808080;
+  --gray-800: #494d4b;
+}
+
+@media (max-width: 1080px) {
+  input[type='color'],
+  input[type='date'],
+  input[type='datetime'],
+  input[type='datetime-local'],
+  input[type='email'],
+  input[type='month'],
+  input[type='number'],
+  input[type='password'],
+  input[type='search'],
+  input[type='tel'],
+  input[type='text'],
+  input[type='time'],
+  input[type='url'],
+  input[type='week'],
+  select:focus,
+  select,
+  textarea {
+    font-size: 1rem !important;
+  }
+
+  html {
+    font-size: 93.75%;
+  }
+}
+
+body {
+  background-color: var(--gray-50);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body,
+input,
+textarea,
+button {
+  font: 500 1rem Inter, sans-serif;
+  color: var(--gray-800);
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
+  font-family: Lexend, sans-serif;
+  color: var(--gray-800);
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+button {
+  transition: filter 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+  &:focus {
+    outline: 0px dotted;
+    outline: 0px auto -webkit-focus-ring-color;
+  }
+}
