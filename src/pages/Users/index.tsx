@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Empty } from 'antd';
 import { Link } from 'react-router-dom';
-import { FiDownload, FiPlusSquare } from 'react-icons/fi';
+import { FiDownload, FiPlusSquare, FiX, FiEdit } from 'react-icons/fi';
 
 import { BiShow } from 'react-icons/bi';
 import { useToast } from '../../hooks/toast';
@@ -12,12 +12,21 @@ import { User } from '../../hooks/auth';
 import useFetch from '../../hooks/useFetch';
 import Modal from '../../components/Modal';
 import SignUpModal from './SignUpModal';
+import EditModal from './EditModal';
 import api from '../../services/api';
+import DeleteModal from './DeleteModal';
 
 const Users: React.FC = () => {
   const { addToast } = useToast();
-  const { data: users, isLoading } = useFetch<User[]>('/user');
+  const { data: users, isLoading, mutate } = useFetch<User[]>('/user');
   const [modalVisibility, setModalVisibility] = useState<boolean>(false);
+  const [deleteModalVisibility, setDeleteModalVisibility] = useState<boolean>(
+    false,
+  );
+  const [editModalVisibility, setEditModalVisibility] = useState<boolean>(
+    false,
+  );
+  const [selectedId, setSeletecId] = useState('');
   // {user.email}
   // console.log(users)
   const downloadList = async () => {
@@ -109,24 +118,30 @@ const Users: React.FC = () => {
 
                           <div className="flex gap-2 lg:gap-4 items-center ml-3">
                             <div>
-                              <Link to={`/transacoes/${user._id}`}>
-                                <button
-                                  type="button"
-                                  className="p-2 rounded-full border text-gray-500 hover:border-primary-500 hover:text-primary-500"
-                                >
-                                  <BiShow />
-                                </button>
-                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSeletecId(user._id);
+                                  setEditModalVisibility(!editModalVisibility);
+                                }}
+                                className="p-2 rounded-full border text-gray-500 hover:border-primary-500 hover:text-primary-500"
+                              >
+                                <FiEdit />
+                              </button>
                             </div>
                             <div>
-                              <Link to={`/transacoes/${user._id}`}>
-                                <button
-                                  type="button"
-                                  className="p-2 rounded-full border text-gray-500 hover:border-primary-500 hover:text-primary-500"
-                                >
-                                  <BiShow />
-                                </button>
-                              </Link>
+                              <button
+                                type="button"
+                                className="p-2 rounded-full border text-gray-500 hover:border-primary-500 hover:text-primary-500"
+                                onClick={() => {
+                                  setSeletecId(user._id);
+                                  setDeleteModalVisibility(
+                                    !deleteModalVisibility,
+                                  );
+                                }}
+                              >
+                                <FiX />
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -144,7 +159,37 @@ const Users: React.FC = () => {
                 setModalVisibility(false);
               }}
             >
-              <SignUpModal setModalVisibility={setModalVisibility} />
+              <SignUpModal
+                setModalVisibility={setModalVisibility}
+                mutate={mutate}
+                infoList={users}
+              />
+            </Modal>
+            <Modal
+              visible={editModalVisibility}
+              onClose={() => {
+                setModalVisibility(false);
+              }}
+            >
+              <EditModal
+                itemId={selectedId}
+                setModalVisibility={setEditModalVisibility}
+                mutate={mutate}
+                infoList={users}
+              />
+            </Modal>
+            <Modal
+              visible={deleteModalVisibility}
+              onClose={() => {
+                setDeleteModalVisibility(false);
+              }}
+            >
+              <DeleteModal
+                id={selectedId}
+                setModalVisibility={setDeleteModalVisibility}
+                mutate={mutate}
+                infoList={users}
+              />
             </Modal>
           </>
         </section>
