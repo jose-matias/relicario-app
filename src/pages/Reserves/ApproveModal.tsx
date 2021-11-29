@@ -32,8 +32,7 @@ const ApproveModal: React.FC<AppProps> = ({
 
   const errorThower = (message: string, fieldName: any) => {
     setError(fieldName, {
-      message:
-        'A data deve ser informada seguindo este formato: Dia / Mês / Ano',
+      message,
     });
     throw new Error(message);
   };
