@@ -9,6 +9,13 @@
     "eject": "react-scripts eject",
     "serve": "serve-build"
   },
+  "keywords": [
+    "System",
+    "Book",
+    "Management"
+  ],
+  "author": "José Matias Filho",
+  "license": "ISC",
   "dependencies": {
     "@ant-design/charts": "1.2.14",
     "@craco/craco": "^6.0.0",
