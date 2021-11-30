@@ -35,7 +35,7 @@ const DeleteModal: React.FC<AppProps> = ({
     <div className="bg-gray-50 h-auto  w-full rounded-md p-10 overflow-y-auto">
       <div className="space-y-14">
         <div className="flex items-center justify-between">
-          <h1 className="font-sans font-bold text-lg">Apagar autor</h1>
+          <h1 className="font-sans font-bold text-lg">Apagar editora</h1>
           <button
             type="button"
             className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 hover:bg-red-600 hover:text-white transition-colors duration-300"
@@ -47,7 +47,7 @@ const DeleteModal: React.FC<AppProps> = ({
           </button>
         </div>
         <div className="text-center leading-loose">
-          <p>Você deseja apagar esse author</p>
+          <p>Você deseja apagar essa editora</p>
           <p className="font-bold">Essa ação é irreversível.</p>
         </div>
         <div className="w-full h-full flex justify-between">
@@ -66,11 +66,11 @@ const DeleteModal: React.FC<AppProps> = ({
             className="p-2 bg-gray-300 focus-within:bg-gray-400 rounded m-1 text-gray-500 ring-2 ring-gray-300"
             onClick={async () => {
               if (activeButton) {
-                await api.delete(`/author/${id}`);
+                await api.delete(`/publisher/${id}`);
                 mutate(infoList, true);
                 addToast({
                   type: 'success',
-                  title: 'Autor apagado com sucesso',
+                  title: 'Editora apagado com sucesso',
                 });
                 setModalVisibility(false);
               }
