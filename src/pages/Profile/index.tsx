@@ -40,7 +40,7 @@ const Profile: React.FC = () => {
         setLoading(true);
 
         const schema = Yup.object().shape({
-          name: Yup.string().required('Nome obrigatório'),
+          name: Yup.string().required('O nome do usuário é obrigatório'),
         });
 
         await schema.validate(data, { abortEarly: false });
@@ -80,16 +80,16 @@ const Profile: React.FC = () => {
           }
         }
 
-        const { data: address } = responseAddress;
+        const address = responseAddress?.data;
 
         await api.put(`/user/${user._id}`, {
           _id: user._id,
           name,
           birthday: parseISO(birthday),
-          _address: address._id,
+          _address: address?._id || null,
         });
 
-        updateUser({ ...user, name, _address: address._id, birthday });
+        updateUser({ ...user, name, _address: address?._id || null, birthday });
 
         addToast({
           type: 'success',
