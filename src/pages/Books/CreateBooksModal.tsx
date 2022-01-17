@@ -451,6 +451,13 @@ const CreateBooksModal: React.FC<AppProps> = ({
     return null;
   };
 
+  const onSubmit = useCallback(
+    async data => {
+      console.log(data);
+    },
+    [],
+  );
+
   return (
     <div className="bg-gray-50 rounded-md p-10 w-full sm:h-80 md:h-auto">
       <div className="space-y-3">
@@ -478,15 +485,21 @@ const CreateBooksModal: React.FC<AppProps> = ({
           <div className="display flex items-center w-full h-auto justify-end pt-5">
             <Button
               title="Voltar"
-              type="submit"
+              type="button"
               hidden={page === 0}
               onClick={() => setPage((currentPage) => currentPage - 1)}
             />
             <Button
               title="Próximo"
-              type="submit"
+              type="button"
               hidden={page === 2}
               onClick={() => setPage((currentPage) => currentPage + 1)}
+            />
+            <Button
+              title="Salvar Livro"
+              type="submit"
+              hidden={page !== 2}
+              onClick={onSubmit}
             />
           </div>
         </div>
