@@ -61,11 +61,12 @@ const CreateBooksModal: React.FC<AppProps> = ({
     watch,
   } = useForm();
 
+  const { addToast } = useToast();
   const [page, setPage] = useState<number>(0);
   const [bookImage, setBookImage] = useState<any>('capa-default.png');
   const [isImagePicked, setImagePicked] = useState<boolean>(false);
 
-  const title = [
+  const subtitle = [
     'Insira os dados do livro',
     'Selecione os dados do livro',
     'Selecione uma capa'
@@ -281,6 +282,18 @@ const CreateBooksModal: React.FC<AppProps> = ({
   );
   }
 
+  const schema = Yup.object().shape({
+    title: Yup.string().required('É necessário definir um título'),
+    about: Yup.string().required('É necessário descrever o livro'),
+    pages: Yup.number().required('É necessário informar a quantidade de páginas'),
+    publisher: Yup.object().required('Informe qual a editora do livro'),
+    location: Yup.string().required('Informa a localização do livro na biblioteca'),
+    quantity: Yup.number().required('Defina a quantidade de livros disponíveis'),
+    language: Yup.string().required('Informe a linguagem do livro'),
+    ISBN10: Yup.string().required('Defina o ISBN10'),
+    ISBN13: Yup.string().required('Defina o ISBN13'),
+  });
+
   function secondPage() {
     console.log('secondPage()');
 
@@ -439,13 +452,29 @@ const CreateBooksModal: React.FC<AppProps> = ({
     );
   }
 
-  const PageDisplay = (): any => {
-    if (page === 0) {
-      return firstPage();
-    } if (page === 1) {
-      return secondPage();
-    } if (page === 2) {
-      return thirdPage();
+  const PageDisplay = () => {
+    try {
+      if (page === 0) {
+        return firstPage();
+      } if (page === 1) {
+        console.log(getValues());
+
+        await schema.validate(getValues(), { abortEarly: false });
+        return secondPage();
+      } if (page === 2) {
+        return thirdPage();
+      }
+    } catch (error) {
+      if (error instanceof Yup.ValidationError) {
+        error.inner.forEach((e: any) => {
+          addToast({
+            type: 'error',
+            title: 'Erro ao criar livro',
+            description: e.message,
+          });
+          setError(e.path, { message: e.message });
+        });
+      }
     }
 
     return null;
@@ -473,11 +502,11 @@ const CreateBooksModal: React.FC<AppProps> = ({
             </button>
           </div>
           <div className="flex pb-5">
-            <h3>{title[page]}</h3>
+            <h3>{subtitle[page]}</h3>
           </div>
         </div>
 
-        <div className="form">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2 h-auto w-full">
             {PageDisplay()}
           </div>
@@ -490,19 +519,12 @@ const CreateBooksModal: React.FC<AppProps> = ({
               onClick={() => setPage((currentPage) => currentPage - 1)}
             />
             <Button
-              title="Próximo"
-              type="button"
-              hidden={page === 2}
-              onClick={() => setPage((currentPage) => currentPage + 1)}
-            />
-            <Button
-              title="Salvar Livro"
-              type="submit"
-              hidden={page !== 2}
-              onClick={onSubmit}
+              title={page !== 2 ? 'Próximo' : 'Criar Livro'}
+              type={page !== 2 ? 'button' : 'submit'}
+              onClick={() => page !== 2 ? setPage((currentPage) => currentPage + 1) : null}
             />
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
