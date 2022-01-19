@@ -72,8 +72,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
     'Selecione uma capa'
   ];
 
-  console.log('Page: ', page);
-
   const { data: authors } = useFetch('/author');
   const { data: categories } = useFetch('/category');
   const { data: publishers } = useFetch('/publisher');
@@ -211,8 +209,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
   }
 
   function firstPage() {
-    console.log('firstPage()');
-
     return (
       <>
         <Input
@@ -285,8 +281,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
   }
 
   function secondPage() {
-    console.log('secondPage()');
-
     const customStyles = {
       control: (base: any, state: any) => ({
         ...base,
@@ -411,8 +405,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
   }
 
   function thirdPage() {
-    console.log('thirdPage()');
-
     return (
       <>
         <div className="flex-col w-full">
@@ -534,7 +526,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
     async data => {
       console.log(data);
     },
-    [setError],
+    [],
   );
 
   return (
@@ -556,7 +548,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
           <div className="space-y-2 h-auto w-full">
             {PageDisplay()}
           </div>
