@@ -234,6 +234,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
         <Input
           icon={FiBookOpen}
           name="pages"
+          type="number"
           placeholder="Quantidade de páginas"
           register={register('pages')}
           error={errors?.pages?.message}
@@ -250,6 +251,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
         <Input
           icon={FiCopy}
           name="quantity"
+          type="number"
           placeholder="Quantidade de livros"
           register={register('quantity')}
           error={errors?.quantity?.message}
@@ -281,18 +283,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
       </>
   );
   }
-
-  const schema = Yup.object().shape({
-    title: Yup.string().required('É necessário definir um título'),
-    about: Yup.string().required('É necessário descrever o livro'),
-    pages: Yup.number().required('É necessário informar a quantidade de páginas'),
-    publisher: Yup.object().required('Informe qual a editora do livro'),
-    location: Yup.string().required('Informa a localização do livro na biblioteca'),
-    quantity: Yup.number().required('Defina a quantidade de livros disponíveis'),
-    language: Yup.string().required('Informe a linguagem do livro'),
-    ISBN10: Yup.string().required('Defina o ISBN10'),
-    ISBN13: Yup.string().required('Defina o ISBN13'),
-  });
 
   function secondPage() {
     console.log('secondPage()');
@@ -330,10 +320,10 @@ const CreateBooksModal: React.FC<AppProps> = ({
           <>
             <Input
               icon={FiUser}
-              name="new_author"
+              name="author_name"
               placeholder="Nome do Autor"
               register={register('author_name')}
-              error={errors?.new_author?.message}
+              error={errors?.author_name?.message}
             />
 
             <Input
@@ -369,7 +359,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
               name="category_name"
               placeholder="Categoria"
               register={register('category_name')}
-              error={errors?.new_category?.message}
+              error={errors?.category_name?.message}
             />
 
             <Input
@@ -453,16 +443,75 @@ const CreateBooksModal: React.FC<AppProps> = ({
   }
 
   const PageDisplay = () => {
-    try {
-      if (page === 0) {
-        return firstPage();
-      } if (page === 1) {
-        console.log(getValues());
+    if (page === 0) {
+      return firstPage();
+    } if (page === 1) {
+      return secondPage();
+    } if (page === 2) {
+      return thirdPage();
+    }
 
-        await schema.validate(getValues(), { abortEarly: false });
-        return secondPage();
-      } if (page === 2) {
-        return thirdPage();
+    return null;
+  };
+
+  async function formValidatorAndCtrlPage(ctrl: 'prev' | 'next'): Promise<any> {
+    try {
+      if (ctrl === 'next' && page === 0) {
+        const schemaFirstPage = Yup.object().shape({
+          title: Yup.string().required('É necessário definir um título'),
+          about: Yup.string().required('É necessário descrever o livro'),
+          pages: Yup.string().required('É necessário informar a quantidade de páginas'),
+          location: Yup.string().required('Informa a localização do livro na biblioteca'),
+          quantity: Yup.string().required('Defina a quantidade de livros disponíveis'),
+          language: Yup.string().required('Informe a linguagem do livro'),
+          ISBN10: Yup.string().required('Defina o ISBN10'),
+          ISBN13: Yup.string().required('Defina o ISBN13'),
+        });
+
+        await schemaFirstPage.validate(getValues(), { abortEarly: false });
+
+        setPage((currentPage) => currentPage + 1);
+      } else if (ctrl === 'next' && page === 1) {
+        const schemaSecondPage = Yup.object().shape({
+          authors: Yup.object().required('É necessário definir o autor do livro'),
+          categories: Yup.array().min(1).required('É necessário escolher ao menos uma categoria'),
+          publisher: Yup.object().required('Informe qual a editora do livro'),
+        });
+
+        if (setNewAuthor) {
+          const schemaNewAuthor = Yup.object().shape({
+            author_name: Yup.string().required('Preencha o nome do autor'),
+            author_about: Yup.string().required('Preencha a descrição do autor'),
+          });
+
+          await schemaNewAuthor.validate(getValues(), { abortEarly: false });
+        }
+
+        if (setNewCategory) {
+          const schemaNewCategory = Yup.object().shape({
+            category_name: Yup.string().required('Preencha o nome da categoria'),
+            category_about: Yup.string().required('Preencha a descrição da categoria'),
+          });
+
+          await schemaNewCategory.validate(getValues(), { abortEarly: false });
+        }
+
+        if (setNewPublisher) {
+          const schemaNewPublisher = Yup.object().shape({
+            publisher_name: Yup.string().required('Preencha o nome da editora'),
+            publisher_site: Yup.string().required('Preencha o site da editora'),
+          });
+
+          await schemaNewPublisher.validate(getValues(), { abortEarly: false });
+        }
+
+        await schemaSecondPage.validate(getValues(), { abortEarly: false });
+
+        setPage((currentPage) => currentPage + 1);
+      } else if (ctrl === 'prev' && page === 1) {
+        setPage((currentPage) => currentPage - 1);
+      } else if (ctrl === 'prev' && page === 2) {
+        setPage((currentPage) => currentPage - 1);
       }
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
@@ -472,19 +521,20 @@ const CreateBooksModal: React.FC<AppProps> = ({
             title: 'Erro ao criar livro',
             description: e.message,
           });
+
           setError(e.path, { message: e.message });
         });
       }
     }
 
     return null;
-  };
+  }
 
   const onSubmit = useCallback(
     async data => {
       console.log(data);
     },
-    [],
+    [setError],
   );
 
   return (
@@ -516,12 +566,18 @@ const CreateBooksModal: React.FC<AppProps> = ({
               title="Voltar"
               type="button"
               hidden={page === 0}
-              onClick={() => setPage((currentPage) => currentPage - 1)}
+              onClick={() => formValidatorAndCtrlPage('prev')}
             />
             <Button
-              title={page !== 2 ? 'Próximo' : 'Criar Livro'}
-              type={page !== 2 ? 'button' : 'submit'}
-              onClick={() => page !== 2 ? setPage((currentPage) => currentPage + 1) : null}
+              title="Próximo"
+              type="submit"
+              hidden={page === 2}
+              onClick={() => formValidatorAndCtrlPage('next')}
+            />
+            <Button
+              title="Criar Livro"
+              type="submit"
+              hidden={page !== 2}
             />
           </div>
         </form>
