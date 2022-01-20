@@ -24,8 +24,10 @@ import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import useFetch from '../../hooks/useFetch';
 import { useAuth } from '../../hooks/auth';
+import ToggleSwitch from '../../components/ToggleSwitch';
 
 interface AppProps {
+  id: string;
   setModalVisibility: Function;
   mutate: any;
   infoList: any;
@@ -46,6 +48,7 @@ interface CategoryType {
 }
 
 const CreateBooksModal: React.FC<AppProps> = ({
+  id,
   setModalVisibility,
   mutate,
   infoList,
@@ -64,7 +67,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
   const { addToast } = useToast();
   const [page, setPage] = useState<number>(0);
   const [bookImage, setBookImage] = useState<any>('capa-default.png');
-  const [isImagePicked, setImagePicked] = useState<boolean>(false);
+  const [isBookActive, setIsBookActive] = useState<boolean>(true);
 
   const subtitle = [
     'Insira os dados do livro',
@@ -522,9 +525,74 @@ const CreateBooksModal: React.FC<AppProps> = ({
     return null;
   }
 
+  const findBook = (bookId: string) => {
+    api.get(`/book/${bookId}`).then(response => {
+      const { data } = response;
+
+      if (data) {
+        const {
+          _category,
+          ISBN10,
+          ISBN13,
+          _author,
+          name,
+          _publisher,
+          language,
+          pages_qty,
+          location,
+          quantity,
+          cover,
+          status,
+          description,
+        } = data;
+
+        const category: any = [];
+
+        _category.forEach((item: any) => {
+          category.push({
+            label: item.name,
+            value: item._id,
+          });
+        });
+
+        setValue('title', name);
+        setValue('ISBN10', ISBN10);
+        setValue('ISBN13', ISBN13);
+        setValue('about', description);
+        setValue('pages', pages_qty);
+        setValue('location', location);
+        setValue('quantity', quantity);
+        setValue('publisher', {
+          label: _publisher.name,
+          value: _publisher._id,
+        });
+        setValue('language', language);
+        setValue('authors', {
+          label: _author.name,
+          value: _author._id,
+        });
+        setValue('categories', category);
+
+        setIsBookActive(status);
+        setBookImage(cover);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
+
+  useEffect(() => {
+    if (id) {
+      findBook(id);
+    }
+  }, [id]);
+
   const onSubmit = useCallback(
     async data => {
-      console.log(data);
+      if (page === 2) {
+        console.log(data);
+      }
     },
     [],
   );
@@ -534,7 +602,9 @@ const CreateBooksModal: React.FC<AppProps> = ({
       <div className="space-y-3">
         <div className="flex-col items-center">
           <div className="flex justify-between">
-            <h1 className="font-sans font-bold text-lg">Adicionar novo livro</h1>
+            <h1 className="font-sans font-bold text-lg">
+              {id ? 'Editar Livro' : 'Adicionar novo livro'}
+            </h1>
             <button
               type="button"
               className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 hover:bg-red-600 hover:text-white transition-colors duration-300"
@@ -546,6 +616,14 @@ const CreateBooksModal: React.FC<AppProps> = ({
           <div className="flex pb-5">
             <h3>{subtitle[page]}</h3>
           </div>
+        </div>
+
+        <div className={`flex items-center justify-end space-x-3 pb-3 ${page !== 0 ? 'hidden' : ''}`}>
+          <span>{isBookActive ? 'Livro Ativo' : 'Livro inativo'}</span>
+          <ToggleSwitch
+            isToggled={isBookActive}
+            onToggle={() => setIsBookActive(!isBookActive)}
+          />
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
@@ -567,7 +645,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
               onClick={() => formValidatorAndCtrlPage('next')}
             />
             <Button
-              title="Criar Livro"
+              title={id ? 'Salvar Livro' : 'Criar Livro'}
               type="submit"
               hidden={page !== 2}
             />

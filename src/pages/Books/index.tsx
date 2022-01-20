@@ -61,6 +61,7 @@ const Books: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => {
+                      setSeletecId(null);
                       setModalVisibility(!modalVisibility);
                     }}
                     className="text-primary-500 text-2xl cursor-pointer pr-5"
@@ -116,7 +117,7 @@ const Books: React.FC = () => {
                                 className="p-2 rounded-full border text-gray-500 hover:border-primary-500 hover:text-primary-500"
                                 onClick={() => {
                                   setSeletecId(book._id);
-                                  setEditModalVisibility(!editModalVisibility);
+                                  setModalVisibility(!editModalVisibility);
                                 }}
                               >
                                 <FiEdit />
@@ -152,6 +153,7 @@ const Books: React.FC = () => {
               }}
             >
               <CreateBooksModal
+                id={selectedId}
                 setModalVisibility={setModalVisibility}
                 infoList={books}
                 mutate={mutate}
