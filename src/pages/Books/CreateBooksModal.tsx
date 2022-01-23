@@ -6,15 +6,12 @@ import {
   FiUser,
   FiFileText,
   FiBook,
-  FiFeather,
   FiBold,
   FiBookOpen,
-  FiDollarSign,
   FiTag,
   FiCopy,
   FiArchive,
 } from 'react-icons/fi';
-import { FaCloud } from 'react-icons/fa';
 import Select from 'react-select';
 import * as Yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
@@ -67,7 +64,8 @@ const CreateBooksModal: React.FC<AppProps> = ({
   const { user } = useAuth();
   const { addToast } = useToast();
   const [page, setPage] = useState<number>(0);
-  const [bookImage, setBookImage] = useState<any>('capa-default.png');
+  const [bookImageInfo, setBookImageInfo] = useState<any>(null);
+  const [bookImageArrayBuffer, setBookImageArrayBuffer] = useState<any>('capa-default.png');
   const [isBookActive, setIsBookActive] = useState<boolean>(true);
   const [submitForm, setSubmitForm] = useState<boolean>(false);
 
@@ -206,10 +204,13 @@ const CreateBooksModal: React.FC<AppProps> = ({
 
     reader.onload = () => {
       if (reader.readyState === reader.DONE) {
-        setBookImage(reader.result);
+        setBookImageArrayBuffer(reader.result);
+        console.log(reader.result);
+
       }
     }
 
+    setBookImageInfo(event.target.files[0]);
     reader.readAsDataURL(event.target.files[0]);
   }
 
@@ -415,7 +416,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
         <div className="flex-col w-full">
           <div className="flex items-center justify-center">
             <img
-              src={bookImage}
+              src={bookImageArrayBuffer}
               alt=""
               className="border-solid border-2 border-green-500"
               style={{ width: 200, height: 267 }}
@@ -531,9 +532,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
     api.get(`/book/${bookId}`).then(response => {
       const { data } = response;
 
-      console.log(data);
-
-
       if (data) {
         const {
           _category,
@@ -579,11 +577,15 @@ const CreateBooksModal: React.FC<AppProps> = ({
         setValue('categories', category);
 
         setIsBookActive(status);
-        setBookImage(cover);
+        setBookImageArrayBuffer(cover);
       }
     })
     .catch(error => {
-      console.log(error);
+      addToast({
+        type: 'error',
+        title: 'Erro ao editar livro',
+        description: error.message,
+      });
     });
   }
 
@@ -595,111 +597,146 @@ const CreateBooksModal: React.FC<AppProps> = ({
 
   const onSubmit = useCallback(
     async data => {
-      if (page === 2 && id === null) {
+      if (page === 2) {
+        try {
+          let newAuthorId = '';
+          let newCategoryId = '';
+          let newPublisherId = '';
+          const categoryArray: string[] = [];
 
-        let newAuthorId = '';
-        let newCategoryId = '';
-        let newPublisherId = '';
-        const categoryArray: string[] = [];
+          if (setNewAuthor) {
+            const name = getValues('author_name');
+            const about = getValues('author_about');
 
-        if (setNewAuthor) {
-          const name = getValues('author_name');
-          const about = getValues('author_about');
+            const response = await api.post('/author', {
+              name,
+              about,
+            });
 
-          const response = await api.post('/author', {
-            name,
-            about,
+            newAuthorId = response?.data?._id;
+          }
+
+          if (setNewCategory) {
+            const name = getValues('category_name');
+            const about = getValues('category_about');
+
+            const response = await api.post('/category', {
+              name,
+              about,
+            });
+
+            newCategoryId = response?.data?._id;
+
+            const filteredArray = data.categories.filter((element: any) => {
+              return element.value !== 'set_new_category';
+            });
+
+            categoryArray.push(newCategoryId);
+
+            filteredArray.forEach((element: any) => {
+              categoryArray.push(element.value);
+            });
+          } else {
+            data.categories.forEach((element: any) => {
+              categoryArray.push(element.value);
+            });
+          }
+
+          if (setNewPublisher) {
+            const name = getValues('publisher_name');
+            const site = getValues('publisher_site');
+
+            const response = await api.post('/publisher', {
+              name,
+              site,
+            });
+
+            newPublisherId = response?.data?._id;
+          }
+
+          const author = setNewAuthor ? newAuthorId : data.authors.value;
+          const publisher = setNewPublisher ? newPublisherId : data.publisher.value;
+          const category = categoryArray;
+
+          let bookInfo = null;
+
+          if (id === null) {
+            bookInfo = await api.post('/book', {
+              _user: user._id,
+              _category: category,
+              _author: author,
+              _publisher: publisher,
+              name: data.title,
+              description: data.about,
+              quantity: data.quantity,
+              location: data.location,
+              language: data.language,
+              pages_qty: data.pages,
+              ISBN10: data.ISBN10,
+              ISBN13: data.ISBN13,
+            });
+          } else if (id !== null) {
+            bookInfo = await api.put(`/book/${id}`, {
+              _user: user._id,
+              _category: category,
+              _author: author,
+              _publisher: publisher,
+              name: data.title,
+              description: data.about,
+              quantity: data.quantity,
+              location: data.location,
+              language: data.language,
+              pages_qty: data.pages,
+              ISBN10: data.ISBN10,
+              ISBN13: data.ISBN13,
+              status: isBookActive,
+            });
+          }
+
+          if (bookImageInfo) {
+            const bookId = bookInfo?.data?._id;
+            const formData: any = new FormData();
+
+            formData.append('file', bookImageInfo);
+            formData.append('bookId', bookId);
+
+            await api.post('/file', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data;',
+              },
+            });
+          }
+
+          addToast({
+            title: id ? 'Livro editado com sucesso' : 'Livro criado com sucesso',
+            type: 'success',
           });
 
-          newAuthorId = response?.data?._id;
+          mutate(infoList, true);
+          setModalVisibility(false);
+        } catch (error: any) {
+          if (error instanceof Yup.ValidationError) {
+            error.inner.forEach((e: any) => {
+              addToast({
+                type: 'error',
+                title: 'Erro ao criar novo livro',
+                description: e.message,
+              });
+              setError(e.path, { message: e.message });
+            });
+          } else {
+            addToast({
+              type: `error`,
+              title: 'Erro inesperado',
+              description: error.message
+                ? error.message
+                : 'Aconteceu algum problema contate o suporte',
+            });
+          }
         }
-
-        if (setNewCategory) {
-          const name = getValues('category_name');
-          const about = getValues('category_about');
-
-          const response = await api.post('/category', {
-            name,
-            about,
-          });
-
-          newCategoryId = response?.data?._id;
-
-          const filteredArray = data.categories.filter((element: any) => {
-            return element.value !== 'set_new_category';
-          });
-
-          categoryArray.push(newCategoryId);
-
-          filteredArray.forEach((element: any) => {
-            categoryArray.push(element.value);
-          });
-        } else {
-          data.categories.forEach((element: any) => {
-            categoryArray.push(element.value);
-          });
-        }
-
-        if (setNewPublisher) {
-          const name = getValues('publisher_name');
-          const site = getValues('publisher_site');
-
-          const response = await api.post('/publisher', {
-            name,
-            site,
-          });
-
-          newPublisherId = response?.data?._id;
-        }
-
-        const author = setNewAuthor ? newAuthorId : data.authors.value;
-        const publisher = setNewPublisher ? newPublisherId : data.publisher.value;
-        const category = categoryArray;
-
-        const bookInfo = await api.post('/book', {
-          _user: user._id,
-          _category: category,
-          _author: author,
-          _publisher: publisher,
-          name: data.title,
-          description: data.about,
-          quantity: data.quantity,
-          location: data.location,
-          language: data.language,
-          pages_qty: data.pages,
-          ISBN10: data.ISBN10,
-          ISBN13: data.ISBN13,
-        });
-
-        const bookId = bookInfo.data._id;
-
-        console.log('bookId: ', bookId);
-
-        const formData: any = new FormData();
-
-        formData.append('file', bookImage.file);
-        formData.append('bookId', bookId);
-
-        console.log(formData);
-
-        await api.post('/file', formData, {
-          headers: {
-            'Content-Type': `multipart/form-data;boundary=${formData._boundary}`,
-          },
-        });
-
-        addToast({
-          title: id ? 'Livro editado com sucesso' : 'Livro criado com sucesso',
-          type: 'success',
-        });
-
-        mutate(infoList, true);
-        setModalVisibility(false);
-      } else if (page === 2 && id !== null) {
-        console.log(data);
       }
     },
-    [page, submitForm],
+    [page, bookImageInfo, submitForm],
   );
 
   return (
