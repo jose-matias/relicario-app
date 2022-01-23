@@ -67,7 +67,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
   const [bookImageInfo, setBookImageInfo] = useState<any>(null);
   const [bookImageArrayBuffer, setBookImageArrayBuffer] = useState<any>('capa-default.png');
   const [isBookActive, setIsBookActive] = useState<boolean>(true);
-  const [submitForm, setSubmitForm] = useState<boolean>(false);
 
   const subtitle = [
     'Insira os dados do livro',
@@ -736,7 +735,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
         }
       }
     },
-    [page, bookImageInfo, submitForm],
+    [page, bookImageInfo],
   );
 
   return (
