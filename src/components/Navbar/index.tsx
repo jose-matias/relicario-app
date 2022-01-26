@@ -70,6 +70,11 @@ const Navbar: React.FC = () => {
                     </>
                   ) : null}
                   <NavbarItem
+                    title="Sugestão"
+                    path="/sugestion"
+                    icon={FiBookOpen}
+                  />
+                  <NavbarItem
                     title="Reservas"
                     path="/reserves"
                     icon={FiCheckCircle}
