@@ -82,9 +82,7 @@ const CreateModal: React.FC<AppProps> = ({
           <button
             type="button"
             className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 hover:bg-red-600 hover:text-white transition-colors duration-300"
-            onClick={() => {
-              setModalVisibility(false);
-            }}
+            onClick={() => setModalVisibility(false)}
           >
             <FiX />
           </button>
@@ -98,12 +96,13 @@ const CreateModal: React.FC<AppProps> = ({
             register={register('name')}
             error={errors?.name?.message}
           />
+
           <Input
             icon={FiMousePointer}
             name="author"
             placeholder="Autor"
             register={register('author')}
-            error={errors?.site?.message}
+            error={errors?.author?.message}
           />
 
           <div className="display flex items-center justify-end pt-5">

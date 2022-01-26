@@ -156,6 +156,7 @@ const Suggestion: React.FC = () => {
                 infoList={suggestions}
               />
             </Modal>
+
             <Modal
               visible={editModalVisibility}
               onClose={() => {
