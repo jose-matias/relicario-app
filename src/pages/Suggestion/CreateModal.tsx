@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useCallback } from 'react';
-import { FiX, FiMousePointer, FiBookOpen } from 'react-icons/fi';
+import { FiX, FiUser, FiBookOpen } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/Input';
@@ -99,7 +99,7 @@ const CreateModal: React.FC<AppProps> = ({
             error={errors?.name?.message}
           />
           <Input
-            icon={FiMousePointer}
+            icon={FiUser}
             name="author"
             placeholder="Autor"
             register={register('author')}

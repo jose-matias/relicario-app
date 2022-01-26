@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useCallback } from 'react';
-import { FiX, FiUser } from 'react-icons/fi';
+import { FiX, FiUser, FiFileText } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/Input';
@@ -103,7 +103,7 @@ const CreateModal: React.FC<AppProps> = ({
             error={errors?.name?.message}
           />
           <Input
-            icon={FiUser}
+            icon={FiFileText}
             name="about"
             placeholder="Descrição"
             register={register('about')}

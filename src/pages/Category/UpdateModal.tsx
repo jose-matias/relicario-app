@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useCallback, useEffect, useState } from 'react';
-import { FiX, FiUser } from 'react-icons/fi';
+import { FiX, FiTag, FiFileText } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/Input';
@@ -118,14 +118,14 @@ const UpdateModal: React.FC<AppProps> = ({
 
         <form className="space-y-1" onSubmit={handleSubmit(onSubmit)}>
           <Input
-            icon={FiUser}
+            icon={FiTag}
             name="name"
             placeholder="Nome"
             register={register('name')}
             error={errors?.name?.message}
           />
           <Input
-            icon={FiUser}
+            icon={FiFileText}
             name="about"
             placeholder="Descrição"
             register={register('about')}

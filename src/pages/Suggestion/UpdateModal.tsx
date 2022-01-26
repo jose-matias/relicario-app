@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useCallback, useEffect, useState } from 'react';
-import { FiX, FiMousePointer, FiBookOpen } from 'react-icons/fi';
+import { FiX, FiUser, FiBookOpen } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/Input';
@@ -21,7 +21,7 @@ interface Category {
   status: boolean;
   _id: string;
   name: string;
-  site: string;
+  author: string;
 }
 
 const UpdateModal: React.FC<AppProps> = ({
@@ -30,7 +30,7 @@ const UpdateModal: React.FC<AppProps> = ({
   infoList,
   id,
 }) => {
-  const { data: publisher, isLoading } = useFetch<Category>(`/publisher/${id}`);
+  const { data: publisher, isLoading } = useFetch<Category>(`/suggestion/${id}`);
   const [isToggled, setIsToggled] = useState<boolean>(true);
   const {
     register,
@@ -43,7 +43,7 @@ const UpdateModal: React.FC<AppProps> = ({
   useEffect(() => {
     if (!isLoading) {
       setValue('name', publisher?.name);
-      setValue('site', publisher?.site);
+      setValue('author', publisher?.author);
       setIsToggled(publisher?.status);
     }
   }, [publisher, setValue, isLoading, setIsToggled]);
@@ -53,20 +53,20 @@ const UpdateModal: React.FC<AppProps> = ({
     async data => {
       try {
         const schema = Yup.object().shape({
-          name: Yup.string().required('Informe o nome da editora'),
-          site: Yup.string().required('Informe o site da editora'),
+          name: Yup.string().required('Informe o nome do livro'),
+          author: Yup.string().required('Informe o autor do livro'),
         });
 
         await schema.validate(data, { abortEarly: false });
 
-        await api.put(`/publisher/${id}`, {
+        await api.put(`/suggestion/${id}`, {
           name: data.name,
-          site: data.site,
+          author: data.author,
           status: isToggled,
         });
         addToast({
           type: 'success',
-          title: 'Editora alterada com sucesso',
+          title: 'Sugestão alterada com sucesso',
         });
         setModalVisibility(false);
         mutate(infoList);
@@ -75,7 +75,7 @@ const UpdateModal: React.FC<AppProps> = ({
           err.inner.forEach((e: any) => {
             addToast({
               type: 'error',
-              title: 'Erro ao criar editora',
+              title: 'Erro ao editar sugestão',
               description: e.message,
             });
             setError(e.path, { message: e.message });
@@ -125,11 +125,11 @@ const UpdateModal: React.FC<AppProps> = ({
             error={errors?.name?.message}
           />
           <Input
-            icon={FiMousePointer}
-            name="site"
-            placeholder="Site"
-            register={register('site')}
-            error={errors?.site?.message}
+            icon={FiUser}
+            name="author"
+            placeholder="Autor"
+            register={register('author')}
+            error={errors?.author?.message}
           />
 
           <div className="display flex items-center justify-end pt-5">
