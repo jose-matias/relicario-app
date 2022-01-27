@@ -124,6 +124,7 @@ const UpdateModal: React.FC<AppProps> = ({
             register={register('name')}
             error={errors?.name?.message}
           />
+
           <Input
             icon={FiMousePointer}
             name="site"
@@ -133,7 +134,7 @@ const UpdateModal: React.FC<AppProps> = ({
           />
 
           <div className="display flex items-center justify-end pt-5">
-            <Button title="Criar editora" type="submit" />
+            <Button title="Alterar editora" type="submit" />
           </div>
         </form>
       </div>

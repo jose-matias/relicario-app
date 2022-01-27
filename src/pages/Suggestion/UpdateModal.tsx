@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useCallback, useEffect, useState } from 'react';
-import { FiX, FiTag, FiFileText } from 'react-icons/fi';
+import { FiX, FiUser, FiBookOpen } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/Input';
@@ -9,6 +9,7 @@ import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import useFetch from '../../hooks/useFetch';
+import { useAuth } from '../../hooks/auth';
 
 interface AppProps {
   setModalVisibility: Function;
@@ -21,7 +22,7 @@ interface Category {
   status: boolean;
   _id: string;
   name: string;
-  about: string;
+  author: string;
 }
 
 const UpdateModal: React.FC<AppProps> = ({
@@ -30,7 +31,9 @@ const UpdateModal: React.FC<AppProps> = ({
   infoList,
   id,
 }) => {
-  const { data: category, isLoading } = useFetch<Category>(`/category/${id}`);
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'Admin';
+  const { data: publisher, isLoading } = useFetch<Category>(`/suggestion/${id}`);
   const [isToggled, setIsToggled] = useState<boolean>(true);
   const {
     register,
@@ -42,31 +45,31 @@ const UpdateModal: React.FC<AppProps> = ({
 
   useEffect(() => {
     if (!isLoading) {
-      setValue('name', category?.name);
-      setValue('about', category?.about);
-      setIsToggled(category?.status);
+      setValue('name', publisher?.name);
+      setValue('author', publisher?.author);
+      setIsToggled(publisher?.status);
     }
-  }, [category, setValue, isLoading, setIsToggled]);
+  }, [publisher, setValue, isLoading, setIsToggled]);
   const { addToast } = useToast();
 
   const onSubmit = useCallback(
     async data => {
       try {
         const schema = Yup.object().shape({
-          name: Yup.string().required('Informe o nome da categoria'),
-          about: Yup.string().required('Informe a descrição da categoria'),
+          name: Yup.string().required('Informe o nome do livro'),
+          author: Yup.string().required('Informe o autor do livro'),
         });
 
         await schema.validate(data, { abortEarly: false });
 
-        await api.put(`/category/${id}`, {
+        await api.put(`/suggestion/${id}`, {
           name: data.name,
-          about: data.about,
+          author: data.author,
           status: isToggled,
         });
         addToast({
           type: 'success',
-          title: 'Categoria criada com sucesso',
+          title: 'Sugestão alterada com sucesso',
         });
         setModalVisibility(false);
         mutate(infoList);
@@ -75,7 +78,7 @@ const UpdateModal: React.FC<AppProps> = ({
           err.inner.forEach((e: any) => {
             addToast({
               type: 'error',
-              title: 'Erro ao criar categoria',
+              title: 'Erro ao editar sugestão',
               description: e.message,
             });
             setError(e.path, { message: e.message });
@@ -96,7 +99,7 @@ const UpdateModal: React.FC<AppProps> = ({
     <div className="bg-gray-50 h-auto sm:h-84 lg:h-auto w-full rounded-md p-10 overflow-y-auto">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="font-sans font-bold text-lg">Alterar categoria</h1>
+          <h1 className="font-sans font-bold text-lg">Alterar sugestão</h1>
           <button
             type="button"
             className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 hover:bg-red-600 hover:text-white transition-colors duration-300"
@@ -108,32 +111,37 @@ const UpdateModal: React.FC<AppProps> = ({
           </button>
         </div>
 
-        <div className="flex items-center justify-end space-x-6">
-          <span>{isToggled ? 'Categoria Ativa' : 'Usuário Inativo'}</span>
-          <ToggleSwitch
-            isToggled={isToggled}
-            onToggle={() => setIsToggled(!isToggled)}
-          />
-        </div>
+        {isAdmin ? (
+          <div className="flex items-center justify-end space-x-6">
+            <span>{isToggled ? 'Livro em analise' : 'Analisar livro'}</span>
+            <ToggleSwitch
+              isToggled={isToggled}
+              onToggle={() => setIsToggled(!isToggled)}
+            />
+          </div>
+        ) : null}
 
         <form className="space-y-1" onSubmit={handleSubmit(onSubmit)}>
           <Input
-            icon={FiTag}
+            icon={FiBookOpen}
             name="name"
             placeholder="Nome"
+            disabled={!isAdmin}
             register={register('name')}
             error={errors?.name?.message}
           />
+
           <Input
-            icon={FiFileText}
-            name="about"
-            placeholder="Descrição"
-            register={register('about')}
-            error={errors?.about?.message}
+            icon={FiUser}
+            name="author"
+            placeholder="Autor"
+            disabled={!isAdmin}
+            register={register('author')}
+            error={errors?.author?.message}
           />
 
           <div className="display flex items-center justify-end pt-5">
-            <Button title="Alterar categoria" type="submit" />
+            <Button title="Alterar sugestão" type="submit" />
           </div>
         </form>
       </div>

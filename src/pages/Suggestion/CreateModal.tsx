@@ -1,73 +1,52 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useCallback, useEffect, useState } from 'react';
-import { FiX, FiTag, FiFileText } from 'react-icons/fi';
+import React, { useCallback } from 'react';
+import { FiX, FiUser, FiBookOpen } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
-import ToggleSwitch from '../../components/ToggleSwitch';
-import useFetch from '../../hooks/useFetch';
 
 interface AppProps {
   setModalVisibility: Function;
   mutate: any;
-  id: string;
   infoList: any;
 }
 
-interface Category {
-  status: boolean;
-  _id: string;
-  name: string;
-  about: string;
-}
-
-const UpdateModal: React.FC<AppProps> = ({
+const CreateModal: React.FC<AppProps> = ({
   setModalVisibility,
   mutate,
   infoList,
-  id,
 }) => {
-  const { data: category, isLoading } = useFetch<Category>(`/category/${id}`);
-  const [isToggled, setIsToggled] = useState<boolean>(true);
+  const { addToast } = useToast();
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
-    setValue,
   } = useForm();
-
-  useEffect(() => {
-    if (!isLoading) {
-      setValue('name', category?.name);
-      setValue('about', category?.about);
-      setIsToggled(category?.status);
-    }
-  }, [category, setValue, isLoading, setIsToggled]);
-  const { addToast } = useToast();
 
   const onSubmit = useCallback(
     async data => {
       try {
         const schema = Yup.object().shape({
-          name: Yup.string().required('Informe o nome da categoria'),
-          about: Yup.string().required('Informe a descrição da categoria'),
+          name: Yup.string().required('Informe o nome do livro'),
+          author: Yup.string().required('Informe o autor do livro'),
         });
 
         await schema.validate(data, { abortEarly: false });
 
-        await api.put(`/category/${id}`, {
+        await api.post('/suggestion', {
           name: data.name,
-          about: data.about,
-          status: isToggled,
+          author: data.author,
         });
+
         addToast({
           type: 'success',
-          title: 'Categoria criada com sucesso',
+          title: 'Sugestão criada com sucesso',
         });
+
         setModalVisibility(false);
         mutate(infoList);
       } catch (err) {
@@ -75,9 +54,10 @@ const UpdateModal: React.FC<AppProps> = ({
           err.inner.forEach((e: any) => {
             addToast({
               type: 'error',
-              title: 'Erro ao criar categoria',
+              title: 'Erro ao criar sugestão',
               description: e.message,
             });
+
             setError(e.path, { message: e.message });
           });
         } else {
@@ -89,51 +69,44 @@ const UpdateModal: React.FC<AppProps> = ({
         }
       }
     },
-    [addToast, setError, setModalVisibility, infoList, mutate, id, isToggled],
+    [addToast, setError, setModalVisibility, infoList, mutate],
   );
 
   return (
     <div className="bg-gray-50 h-auto sm:h-84 lg:h-auto w-full rounded-md p-10 overflow-y-auto">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="font-sans font-bold text-lg">Alterar categoria</h1>
+          <h1 className="font-sans font-bold text-lg">
+            Adicionar nova sugestão
+          </h1>
           <button
             type="button"
             className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 hover:bg-red-600 hover:text-white transition-colors duration-300"
-            onClick={() => {
-              setModalVisibility(false);
-            }}
+            onClick={() => setModalVisibility(false)}
           >
             <FiX />
           </button>
         </div>
 
-        <div className="flex items-center justify-end space-x-6">
-          <span>{isToggled ? 'Categoria Ativa' : 'Usuário Inativo'}</span>
-          <ToggleSwitch
-            isToggled={isToggled}
-            onToggle={() => setIsToggled(!isToggled)}
-          />
-        </div>
-
         <form className="space-y-1" onSubmit={handleSubmit(onSubmit)}>
           <Input
-            icon={FiTag}
+            icon={FiBookOpen}
             name="name"
             placeholder="Nome"
             register={register('name')}
             error={errors?.name?.message}
           />
+
           <Input
-            icon={FiFileText}
-            name="about"
-            placeholder="Descrição"
-            register={register('about')}
-            error={errors?.about?.message}
+            icon={FiUser}
+            name="author"
+            placeholder="Autor"
+            register={register('author')}
+            error={errors?.author?.message}
           />
 
           <div className="display flex items-center justify-end pt-5">
-            <Button title="Alterar categoria" type="submit" />
+            <Button title="Enviar sugestão" type="submit" />
           </div>
         </form>
       </div>
@@ -141,4 +114,4 @@ const UpdateModal: React.FC<AppProps> = ({
   );
 };
 
-export default UpdateModal;
+export default CreateModal;

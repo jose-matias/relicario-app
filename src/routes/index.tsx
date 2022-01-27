@@ -17,6 +17,7 @@ import Reserve from '../pages/Reserves';
 import Publisher from '../pages/Publishers';
 import RecoverPassword from '../pages/RecoverPassword';
 import Profile from '../pages/Profile';
+import Suggestion from '../pages/Suggestion';
 
 const Routes: React.FC = () => {
   const { user } = useAuth();
@@ -40,6 +41,7 @@ const Routes: React.FC = () => {
         <Route path="/authors" isPrivate exact component={Author} />
         <Route path="/reserves" isPrivate exact component={Reserve} />
         <Route path="/publisher" isPrivate exact component={Publisher} />
+        <Route path="/sugestion" isPrivate exact component={Suggestion} />
         <Route path="/book/:id" isPrivate exact component={BookDetails} />
         <Route path="/perfil" isPrivate exact component={Profile} />
       </Switch>
