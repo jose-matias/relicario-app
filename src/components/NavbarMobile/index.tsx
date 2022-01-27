@@ -27,10 +27,10 @@ const NavbarMobile: React.FC = () => {
         <>
           <NavbarItem path="/books" title="Livros" icon={FiBook} />
           <NavbarItem title="Usuários" path="/users" icon={FiUsers} />
-
           <NavbarItem title="Autores" path="/authors" icon={FiEdit2} />
           <NavbarItem title="Categorias" path="/categories" icon={FiTag} />
           <NavbarItem title="Editoras" path="/publisher" icon={FiBookOpen} />
+          <NavbarItem title="Sugestão" path="/sugestion" icon={FiBookOpen} />
         </>
       ) : null}
       <NavbarItem title="Reservas" path="/reserves" icon={FiCheckCircle} />
