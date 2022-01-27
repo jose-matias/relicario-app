@@ -47,7 +47,7 @@ const DeleteModal: React.FC<AppProps> = ({
           </button>
         </div>
         <div className="text-center leading-loose">
-          <p>Você deseja apagar essa editora</p>
+          <p>Você deseja apagar essa sugestão</p>
           <p className="font-bold">Essa ação é irreversível.</p>
         </div>
         <div className="w-full h-full flex justify-between">
@@ -66,11 +66,11 @@ const DeleteModal: React.FC<AppProps> = ({
             className="p-2 bg-gray-300 focus-within:bg-gray-400 rounded m-1 text-gray-500 ring-2 ring-gray-300"
             onClick={async () => {
               if (activeButton) {
-                await api.delete(`/publisher/${id}`);
+                await api.delete(`/suggestion/${id}`);
                 mutate(infoList, true);
                 addToast({
                   type: 'success',
-                  title: 'Editora apagado com sucesso',
+                  title: 'Sugestão apagado com sucesso',
                 });
                 setModalVisibility(false);
               }

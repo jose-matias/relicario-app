@@ -39,7 +39,7 @@ const CreateModal: React.FC<AppProps> = ({
 
         await api.post('/suggestion', {
           name: data.name,
-          site: data.site,
+          author: data.author,
         });
 
         addToast({

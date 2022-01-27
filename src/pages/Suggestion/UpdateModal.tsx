@@ -9,6 +9,7 @@ import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import useFetch from '../../hooks/useFetch';
+import { useAuth } from '../../hooks/auth';
 
 interface AppProps {
   setModalVisibility: Function;
@@ -30,6 +31,8 @@ const UpdateModal: React.FC<AppProps> = ({
   infoList,
   id,
 }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'Admin';
   const { data: publisher, isLoading } = useFetch<Category>(`/suggestion/${id}`);
   const [isToggled, setIsToggled] = useState<boolean>(true);
   const {
@@ -96,7 +99,7 @@ const UpdateModal: React.FC<AppProps> = ({
     <div className="bg-gray-50 h-auto sm:h-84 lg:h-auto w-full rounded-md p-10 overflow-y-auto">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="font-sans font-bold text-lg">Alterar editora</h1>
+          <h1 className="font-sans font-bold text-lg">Alterar sugestão</h1>
           <button
             type="button"
             className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 hover:bg-red-600 hover:text-white transition-colors duration-300"
@@ -108,32 +111,37 @@ const UpdateModal: React.FC<AppProps> = ({
           </button>
         </div>
 
-        <div className="flex items-center justify-end space-x-6">
-          <span>{isToggled ? 'Editora Ativa' : 'Editora inativa'}</span>
-          <ToggleSwitch
-            isToggled={isToggled}
-            onToggle={() => setIsToggled(!isToggled)}
-          />
-        </div>
+        {isAdmin ? (
+          <div className="flex items-center justify-end space-x-6">
+            <span>{isToggled ? 'Livro em analise' : 'Analisar livro'}</span>
+            <ToggleSwitch
+              isToggled={isToggled}
+              onToggle={() => setIsToggled(!isToggled)}
+            />
+          </div>
+        ) : null}
 
         <form className="space-y-1" onSubmit={handleSubmit(onSubmit)}>
           <Input
             icon={FiBookOpen}
             name="name"
             placeholder="Nome"
+            disabled={!isAdmin}
             register={register('name')}
             error={errors?.name?.message}
           />
+
           <Input
             icon={FiUser}
             name="author"
             placeholder="Autor"
+            disabled={!isAdmin}
             register={register('author')}
             error={errors?.author?.message}
           />
 
           <div className="display flex items-center justify-end pt-5">
-            <Button title="Criar editora" type="submit" />
+            <Button title="Alterar sugestão" type="submit" />
           </div>
         </form>
       </div>
