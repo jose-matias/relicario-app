@@ -36,9 +36,6 @@ const Suggestion: React.FC = () => {
     false,
   );
 
-  console.log(suggestions);
-
-
   return (
     <PageLayout>
       <>
@@ -46,7 +43,7 @@ const Suggestion: React.FC = () => {
           <div className="flex-1 flex flex-col gap-4 ">
             <div className=" bg-white p-4 divide-y divide-gray-100 shadow-sm rounded-md ">
               <header className="pb-4 flex items-center justify-between">
-                <span>{isAdmin ? 'Sugestões' : 'Minhas sugestões'}</span>
+                <span>{isAdmin ? 'Sugestões de livros' : 'Minhas sugestões'}</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -107,6 +104,7 @@ const Suggestion: React.FC = () => {
                                   </button>
                                   <button
                                     type="button"
+                                    disabled={suggestion.status}
                                     className="p-2 rounded-full border text-gray-500 hover:border-primary-500 hover:text-primary-500"
                                     onClick={async () => {
                                       setSeletecId(suggestion._id);
