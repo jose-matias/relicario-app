@@ -12,7 +12,7 @@ const AsideMenu: React.FC<AsideMenuProps> = ({ className }) => {
   return (
     <aside className={className}>
       <nav className=" bg-white py-4 w-full lg:w-64 divide-y divide-gray-100 shadow-sm rounded-md">
-        <AsideMenuItem title="Meu Perfil" icon={FiUser} path="/profile" />
+        <AsideMenuItem title="Meu Perfil" icon={FiUser} path="/perfil" />
       </nav>
       <footer className="bg-white w-full lg:w-64 mt-4 grid p-4 shadow-sm rounded-md ">
         <button
