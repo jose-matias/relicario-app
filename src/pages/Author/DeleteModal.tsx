@@ -20,7 +20,8 @@ const DeleteModal: React.FC<AppProps> = ({
 }) => {
   const { addToast } = useToast();
   const [activeButton, setActiveButton] = useState<boolean>(false);
-  const [countdown, setCountdown] = useState<number>(2);
+  const [countdown, setCountdown] = useState<number>(3);
+
   if (countdown > 0) {
     setTimeout(() => {
       setCountdown(countdown - 1);
@@ -47,7 +48,7 @@ const DeleteModal: React.FC<AppProps> = ({
           </button>
         </div>
         <div className="text-center leading-loose">
-          <p>Você deseja apagar esse author</p>
+          <p>Você deseja apagar esse autor</p>
           <p className="font-bold">Essa ação é irreversível.</p>
         </div>
         <div className="w-full h-full flex justify-between">

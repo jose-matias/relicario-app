@@ -20,7 +20,8 @@ const DeleteModal: React.FC<AppProps> = ({
 }) => {
   const { addToast } = useToast();
   const [activeButton, setActiveButton] = useState<boolean>(false);
-  const [countdown, setCountdown] = useState<number>(2);
+  const [countdown, setCountdown] = useState<number>(3);
+
   if (countdown > 0) {
     setTimeout(() => {
       setCountdown(countdown - 1);

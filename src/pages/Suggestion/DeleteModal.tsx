@@ -20,7 +20,8 @@ const DeleteModal: React.FC<AppProps> = ({
 }) => {
   const { addToast } = useToast();
   const [activeButton, setActiveButton] = useState<boolean>(false);
-  const [countdown, setCountdown] = useState<number>(2);
+  const [countdown, setCountdown] = useState<number>(3);
+
   if (countdown > 0) {
     setTimeout(() => {
       setCountdown(countdown - 1);
@@ -35,7 +36,7 @@ const DeleteModal: React.FC<AppProps> = ({
     <div className="bg-gray-50 h-auto  w-full rounded-md p-10 overflow-y-auto">
       <div className="space-y-14">
         <div className="flex items-center justify-between">
-          <h1 className="font-sans font-bold text-lg">Apagar editora</h1>
+          <h1 className="font-sans font-bold text-lg">Apagar sugestão</h1>
           <button
             type="button"
             className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 hover:bg-red-600 hover:text-white transition-colors duration-300"

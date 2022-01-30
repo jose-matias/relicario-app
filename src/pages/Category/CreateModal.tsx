@@ -75,7 +75,7 @@ const CreateModal: React.FC<AppProps> = ({
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="font-sans font-bold text-lg">
-            Adicionar novo categoria
+            Adicionar nova categoria
           </h1>
           <button
             type="button"
