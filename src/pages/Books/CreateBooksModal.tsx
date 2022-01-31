@@ -596,11 +596,12 @@ const CreateBooksModal: React.FC<AppProps> = ({
 
   const onSubmit = useCallback(
     async data => {
+      let newAuthorId = null;
+      let newCategoryId = null;
+      let newPublisherId = null;
+
       if (page === 2) {
         try {
-          let newAuthorId = '';
-          let newCategoryId = '';
-          let newPublisherId = '';
           const categoryArray: string[] = [];
 
           if (setNewAuthor) {
@@ -714,6 +715,18 @@ const CreateBooksModal: React.FC<AppProps> = ({
           mutate(infoList, true);
           setModalVisibility(false);
         } catch (error: any) {
+          if (!newAuthorId) {
+            await api.delete(`/author/${newAuthorId}`);
+          }
+
+          if (!newCategoryId) {
+            await api.delete(`/category/${newCategoryId}`);
+          }
+
+          if (!newPublisherId) {
+            await api.delete(`/publisher/${newPublisherId}`);
+          }
+
           if (error instanceof Yup.ValidationError) {
             error.inner.forEach((e: any) => {
               addToast({

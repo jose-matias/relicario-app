@@ -125,7 +125,7 @@ const SignIn: React.FC = () => {
                 />
               )}
               onSuccess={google}
-              onFailure={google}
+              // onFailure={google}
               cookiePolicy="single_host_origin"
             />
             <div className="px-1 text-center">
