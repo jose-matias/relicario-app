@@ -40,7 +40,7 @@ jobs:
 
       - name: Stop PM2 process
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'pm2 stop relicario-app'
-        if: ${{}}
+        if: ${{failure()}}
 
       - name: Deploy with rsync
         run: |
