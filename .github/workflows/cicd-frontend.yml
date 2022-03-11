@@ -45,6 +45,7 @@ jobs:
       - name: Deploy with rsync
         run: |
           rsync -rav --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/frontend/build/
+          rsync -rav --delete ./package.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/frontend/
           rsync -rav --delete ./server.js ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/frontend/
 
       - name: Install dependencies on server
