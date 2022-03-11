@@ -3,7 +3,7 @@ import axios from 'axios';
 export const baseURL =
   process.env.NODE_ENV === 'production'
     ? 'https://relicario-api.josematias.dev'
-    : 'http://localhost:3700';
+    : 'http://167.172.235.250:3700';
 
 const api = axios.create({
   baseURL,

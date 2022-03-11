@@ -282,7 +282,7 @@ const CreateBooksModal: React.FC<AppProps> = ({
           error={errors?.ISBN13?.message}
         />
       </>
-  );
+    );
   }
 
   function secondPage() {

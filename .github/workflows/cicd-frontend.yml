@@ -1,0 +1,54 @@
+name: cicd-frontend
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: git fetch --prune --unshallow
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Build project
+        run: yarn build
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Stop PM2 process
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'pm2 stop relicario-app'
+        if: ${{}}
+
+      - name: Deploy with rsync
+        run: |
+          rsync -rav --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/frontend/build/
+          rsync -rav --delete ./server.js ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/frontend/
+
+      - name: Install dependencies on server
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd frontend && yarn'
+
+      - name: Start PM2 process
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd frontend && pm2 start server.js --name relicario-app'
