@@ -27,6 +27,8 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: Build project
+        env:
+          REACT_APP_GOOGLE_APP_ID: ${{ secrets.GOOGLE_APP_ID }}
         run: yarn build
 
       - name: Install SSH Key
@@ -39,7 +41,7 @@ jobs:
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Stop PM2 process
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'pm2 stop relicario-app'
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd frontend && pm2 stop relicario-app'
         if: ${{failure()}}
 
       - name: Deploy with rsync
@@ -52,4 +54,4 @@ jobs:
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd frontend && yarn'
 
       - name: Start PM2 process
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd frontend && pm2 start server.js --name relicario-app'
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd frontend && pm2 start server.js -f --name relicario-app'
