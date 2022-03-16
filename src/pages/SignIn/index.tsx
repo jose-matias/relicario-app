@@ -25,6 +25,8 @@ const SignIn: React.FC = () => {
 
   const { REACT_APP_GOOGLE_APP_ID } = process.env;
 
+  console.log(REACT_APP_GOOGLE_APP_ID);
+
   const { signIn, signInWithGoogle } = useAuth();
   const { state } = useLocation<{ redirect: string }>();
 
