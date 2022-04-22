@@ -1,11 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useCallback, useEffect } from 'react';
-import { FiX, FiUser, FiMail, FiCalendar, FiHash } from 'react-icons/fi';
+import { FiX, FiUser, FiMail } from 'react-icons/fi';
 import Select from 'react-select';
 import * as Yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import Input from '../../components/Input';
-import InputMask from '../../components/InputMask';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import Button from '../../components/Button';
 import api from '../../services/api';
@@ -65,8 +64,6 @@ const EditModal: React.FC<AppProps> = ({
       value: user?.role,
       label: user?.role === 'User' ? 'Usuário' : 'Administrador',
     });
-    console.log(user);
-    console.log(user?.status);
     setIsToggled(user?.status);
     setIsContentLoaded(true);
   }, [user]);

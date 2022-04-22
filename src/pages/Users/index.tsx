@@ -2,10 +2,8 @@
 /* eslint-disable import/no-duplicates */
 import React, { useState } from 'react';
 import { Empty } from 'antd';
-import { Link } from 'react-router-dom';
 import { FiDownload, FiPlusSquare, FiX, FiEdit } from 'react-icons/fi';
 
-import { BiShow } from 'react-icons/bi';
 import { useToast } from '../../hooks/toast';
 import PageLayout from '../../components/PageLayout';
 import { User } from '../../hooks/auth';
@@ -27,8 +25,7 @@ const Users: React.FC = () => {
     false,
   );
   const [selectedId, setSeletecId] = useState('');
-  // {user.email}
-  // console.log(users)
+
   const downloadList = async () => {
     try {
       const response = await api.get('/report-users', {
@@ -50,10 +47,12 @@ const Users: React.FC = () => {
       });
     }
   };
+
   const splitName = (name: string) => {
     const splittedName = name.split(' ');
     return splittedName[0];
   };
+
   return (
     <PageLayout>
       <>

@@ -197,8 +197,8 @@ const Profile: React.FC = () => {
             setValue('street', street);
           }
         })
-        .catch(err => {
-          console.log(err);
+        .catch(error => {
+          console.log(error);
         });
     }
   }, [setValue, cepInfo, user._address]);

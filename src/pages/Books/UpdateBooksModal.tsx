@@ -105,7 +105,6 @@ const UpdateBooksModal: React.FC<AppProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log(bookFields);
     if (bookFields._id) {
       const {
         _category,
@@ -329,11 +328,9 @@ const UpdateBooksModal: React.FC<AppProps> = ({
                 name,
                 site,
               });
-              console.log(res);
+
               newPublisherId = res?.data?._id;
             } catch (error) {
-              console.log(error);
-
               addToast({
                 type: 'error',
                 title: 'Erro ao criar editora',

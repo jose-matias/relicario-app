@@ -18,7 +18,6 @@ const BooksContainer: React.FC = () => {
     if (!isLoading) {
       const filteredBooksArray = books?.filter((book: any) => {
         if (searchTerm === '' && book?.status) {
-          console.log(book.name, book?.status);
           return book;
         }
 
@@ -29,7 +28,7 @@ const BooksContainer: React.FC = () => {
           return book;
         }
       });
-      console.log(filteredBooksArray);
+
       setFilteredBooks(filteredBooksArray);
     }
   }, [searchTerm, books, isLoading]);

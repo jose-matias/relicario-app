@@ -204,8 +204,6 @@ const CreateBooksModal: React.FC<AppProps> = ({
     reader.onload = () => {
       if (reader.readyState === reader.DONE) {
         setBookImageArrayBuffer(reader.result);
-        console.log(reader.result);
-
       }
     }
 
