@@ -24,9 +24,6 @@ const SignIn: React.FC = () => {
   } = useForm();
 
   const { REACT_APP_GOOGLE_APP_ID } = process.env;
-
-  console.log(REACT_APP_GOOGLE_APP_ID);
-
   const { signIn, signInWithGoogle } = useAuth();
   const { state } = useLocation<{ redirect: string }>();
 
@@ -74,6 +71,7 @@ const SignIn: React.FC = () => {
           });
           return;
         }
+
         addToast({
           title: 'Não foi possível realizar seu cadastro',
           description: 'Verifique seu e-mail ou senha e tente novamente',
@@ -106,6 +104,7 @@ const SignIn: React.FC = () => {
               autoComplete="on"
               icon={FiMail}
             />
+
             <Input
               name="password"
               error={errors?.password?.message}
@@ -115,7 +114,9 @@ const SignIn: React.FC = () => {
               autoComplete="on"
               icon={FiLock}
             />
+
             <Button title="Entrar" type="submit" />
+
             <GoogleLogin
               clientId={String(REACT_APP_GOOGLE_APP_ID)}
               render={renderProps => (
@@ -127,7 +128,6 @@ const SignIn: React.FC = () => {
                 />
               )}
               onSuccess={google}
-              // onFailure={google}
               cookiePolicy="single_host_origin"
             />
             <div className="px-1 text-center">
