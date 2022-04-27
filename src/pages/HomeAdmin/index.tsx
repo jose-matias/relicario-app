@@ -13,7 +13,7 @@ interface DataGraph {
 interface Dashboard {
   inactiveUsers: number;
   suggestionReview: number;
-  availableBooks: number;
+  reservedBooks: number;
   borrowedBooks: number;
   dataGraph: Array<DataGraph>;
 }
@@ -31,8 +31,8 @@ const HomeAdmin: React.FC = () => {
     return data.toString();
   }, [dashboard]);
 
-  const availableBooks = useMemo(() => {
-    const data = dashboard?.availableBooks || 0;
+  const reservedBooks = useMemo(() => {
+    const data = dashboard?.reservedBooks || 0;
     return data.toString();
   }, [dashboard]);
 
@@ -82,11 +82,12 @@ const HomeAdmin: React.FC = () => {
               <header className="pb-4 flex items-center justify-between text-3xl">
                 <span>Resumo</span>
               </header>
+
               <div className="grid w-full grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <Stats title="Usuários inativos" value={inativesUsers} icon={FiUsers} />
-                <Stats title="Sugestões revisadas" value={suggestionReview} icon={FiBookmark} />
-                <Stats title="Livros Disponíveis" value={availableBooks} icon={FiBook} />
-                <Stats title="Livros Emprestados" value={borrowedBooks} icon={FiBook} />
+                <Stats title="Sugestões analisadas" value={suggestionReview} icon={FiBookmark} />
+                <Stats title="Livros reservados hoje" value={reservedBooks} icon={FiBook} />
+                <Stats title="Livros emprestados hoje" value={borrowedBooks} icon={FiBook} />
               </div>
 
               <header className="pb-4 flex items-center justify-between text-base text-gray-500 mt-10">
