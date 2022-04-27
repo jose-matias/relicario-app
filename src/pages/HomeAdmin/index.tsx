@@ -13,7 +13,8 @@ interface DataGraph {
 interface Dashboard {
   inactiveUsers: number;
   suggestionReview: number;
-  confirmateReserves: number;
+  availableBooks: number;
+  borrowedBooks: number;
   dataGraph: Array<DataGraph>;
 }
 
@@ -30,13 +31,13 @@ const HomeAdmin: React.FC = () => {
     return data.toString();
   }, [dashboard]);
 
-  const confirmateReserves = useMemo(() => {
-    const data = dashboard?.confirmateReserves || 0;
+  const availableBooks = useMemo(() => {
+    const data = dashboard?.availableBooks || 0;
     return data.toString();
   }, [dashboard]);
 
-  const allCategories = useMemo(() => {
-    const data = 0;
+  const borrowedBooks = useMemo(() => {
+    const data = dashboard?.borrowedBooks || 0;
     return data.toString();
   }, [dashboard]);
 
@@ -83,13 +84,9 @@ const HomeAdmin: React.FC = () => {
               </header>
               <div className="grid w-full grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <Stats title="Usuários inativos" value={inativesUsers} icon={FiUsers} />
-                <Stats title="Sugestões revisadas" value={suggestionReview} icon={FiBook} />
-                <Stats title="Reservas confirmadas" value={confirmateReserves} icon={FiBook} />
-                <Stats
-                  title="Categorias"
-                  value={allCategories}
-                  icon={FiBookmark}
-                />
+                <Stats title="Sugestões revisadas" value={suggestionReview} icon={FiBookmark} />
+                <Stats title="Livros Disponíveis" value={availableBooks} icon={FiBook} />
+                <Stats title="Livros Emprestados" value={borrowedBooks} icon={FiBook} />
               </div>
 
               <header className="pb-4 flex items-center justify-between text-base text-gray-500 mt-10">
