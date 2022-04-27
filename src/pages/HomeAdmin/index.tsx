@@ -1,54 +1,52 @@
 import React, { useMemo } from 'react';
 import { Column, ColumnConfig } from '@ant-design/charts';
-import { FiUsers, FiBook, FiUser, FiBookmark } from 'react-icons/fi';
-import { format } from 'date-fns';
+import { FiUsers, FiBook, FiBookmark } from 'react-icons/fi';
 import Stats from '../../components/Stats';
 import PageLayout from '../../components/PageLayout';
 import useFetch from '../../hooks/useFetch';
 
-interface LastAddedBooks {
-  date: Date;
-  books: number;
+interface DataGraph {
+  label: string;
+  value: number;
 }
 
 interface Dashboard {
-  users: number;
-  books: number;
-  categories: number;
-  authors: number;
-  lastAddedBooks: Array<LastAddedBooks>;
+  inactiveUsers: number;
+  suggestionReview: number;
+  confirmateReserves: number;
+  dataGraph: Array<DataGraph>;
 }
 
 const HomeAdmin: React.FC = () => {
   const { data: dashboard } = useFetch<Dashboard>('/dashboard');
 
-  const allUsers = useMemo(() => {
-    const users = dashboard?.users || 0;
-    return users.toString();
+  const inativesUsers = useMemo(() => {
+    const data = dashboard?.inactiveUsers || 0;
+    return data.toString();
   }, [dashboard]);
 
-  const allBooks = useMemo(() => {
-    const books = dashboard?.books || 0;
-    return books.toString();
+  const suggestionReview = useMemo(() => {
+    const data = dashboard?.suggestionReview || 0;
+    return data.toString();
   }, [dashboard]);
 
-  const allAuthors = useMemo(() => {
-    const authors = dashboard?.authors || 0;
-    return authors.toString();
+  const confirmateReserves = useMemo(() => {
+    const data = dashboard?.confirmateReserves || 0;
+    return data.toString();
   }, [dashboard]);
 
   const allCategories = useMemo(() => {
-    const categories = dashboard?.categories || 0;
-    return categories.toString();
+    const data = 0;
+    return data.toString();
   }, [dashboard]);
 
   const chartData = useMemo(() => {
-    const lastAddedBooks = dashboard?.lastAddedBooks || [];
+    const dataGraph = dashboard?.dataGraph || [];
 
-    return lastAddedBooks.map(item => {
+    return dataGraph.map(item => {
       return {
-        type: format(new Date(item.date), 'dd/MM/yyyy'),
-        sales: item.books,
+        label: item.label,
+        value: item.value,
       };
     });
   }, [dashboard]);
@@ -56,8 +54,8 @@ const HomeAdmin: React.FC = () => {
   const config: ColumnConfig = {
     data: chartData,
     color: '#1F784C',
-    xField: 'type',
-    yField: 'sales',
+    xField: 'label',
+    yField: 'value',
     appendPadding: 15,
     height: 300,
     label: {
@@ -68,9 +66,8 @@ const HomeAdmin: React.FC = () => {
       },
     },
     meta: {
-      type: { alias: 'Category' },
-      sales: {
-        alias: 'Cadastros',
+      value: {
+        alias: 'Quant.',
       },
     },
   };
@@ -85,9 +82,9 @@ const HomeAdmin: React.FC = () => {
                 <span>Resumo</span>
               </header>
               <div className="grid w-full grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-                <Stats title="Usuários" value={allUsers} icon={FiUsers} />
-                <Stats title="Livros" value={allBooks} icon={FiBook} />
-                <Stats title="Autores" value={allAuthors} icon={FiUser} />
+                <Stats title="Usuários inativos" value={inativesUsers} icon={FiUsers} />
+                <Stats title="Sugestões revisadas" value={suggestionReview} icon={FiBook} />
+                <Stats title="Reservas confirmadas" value={confirmateReserves} icon={FiBook} />
                 <Stats
                   title="Categorias"
                   value={allCategories}
