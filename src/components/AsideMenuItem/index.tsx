@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { IconBaseProps } from 'react-icons/lib';
 import { Link } from 'react-router-dom';
+import { IconBaseProps } from 'react-icons/lib';
 
 interface AsideMenuItemProps {
   path: string;
