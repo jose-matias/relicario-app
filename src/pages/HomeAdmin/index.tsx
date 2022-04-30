@@ -90,8 +90,8 @@ const HomeAdmin: React.FC = () => {
                 <Stats title="Livros emprestados hoje" value={borrowedBooks} icon={FiBook} />
               </div>
 
-              <header className="pb-4 flex items-center justify-between text-base text-gray-500 mt-10">
-                <span>Cadastro de livros na última semana</span>
+              <header className="pb-4 flex items-center justify-between text-xl text-gray-500 mt-10">
+                <span>Últimos cadastros</span>
               </header>
               <div className="grid w-full grid-cols-1 sm:grid-cols-1">
                 <Column {...config} />
